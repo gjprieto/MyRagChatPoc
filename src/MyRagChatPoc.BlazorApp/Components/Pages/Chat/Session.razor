@@ -1,0 +1,49 @@
+﻿@page "/chat/session"
+@rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
+
+@inject IChatService _chatService;
+@inject NotificationService _notificationService;
+
+<RadzenNotification />
+
+<ChatComponent @ref="_chat" OnNewUserMessage="HandleOnNewUserMessageAsync" />
+
+@code {
+    ChatComponent _chat;
+
+    private void ShowNotification(string summary, string detail, NotificationSeverity severity = NotificationSeverity.Info, double duration = 4000)
+    {
+        var message = new NotificationMessage { Severity = severity, Summary = summary, Detail = detail, Duration = duration };
+        _notificationService.Notify(message);
+    }
+
+    private async Task HandleOnNewUserMessageAsync(string message)
+    {
+        try
+        {
+            var messageId = _chat.CreateMessage("", false, ChatMessageType.Assistant);
+
+            var onContentReceivedHandler = new EventHandler<string>(async (obj, content) =>
+            {
+                await _chat.TypeMessageAsync(messageId, content);
+                StateHasChanged();
+            });
+
+            _chatService.OnContentReceived += onContentReceivedHandler;
+            await _chatService.SendMessageAsync(message);
+            _chatService.OnContentReceived -= onContentReceivedHandler;
+
+            ShowNotification("Chat Info", "Answer completed");
+        }
+        catch (Exception ex)
+        {
+            ShowNotification("Chat Error", "Something went wrong while receiving an answer!", severity: NotificationSeverity.Error);
+        }
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}

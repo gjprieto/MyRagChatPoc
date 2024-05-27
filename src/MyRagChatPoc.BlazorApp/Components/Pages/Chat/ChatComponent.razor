@@ -1,0 +1,107 @@
+﻿@rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
+
+@inject IJSRuntime _jsRuntime;
+
+<style>
+    #chat-stack {
+        height: 615px !important;
+        background-color: white;
+        padding-left: 10px;
+        padding-right: 10px;
+        padding-bottom: 10px;
+    }
+</style>
+
+<RadzenStack id="chat-stack" Orientation="Orientation.Vertical" AlignItems="AlignItems.Center" JustifyContent="JustifyContent.End" Wrap="FlexWrap.NoWrap">
+    <RadzenColumn id="chat-wrapper" Style="width:100% !important; overflow-y:scroll !important;">
+        @foreach (var message in _messages)
+        {
+            if (message.Type == ChatMessageType.Assistant)
+            {
+                <RadzenRow JustifyContent="JustifyContent.Start" Style="margin-bottom:5px;">
+                    <RadzenColumn Size="9">
+                        <RadzenCard Variant="Variant.Flat" class="rz-background-color-info-lighter rz-color-on-info-lighter">
+                            <RadzenText TextStyle="TextStyle.Body1">@message.Message</RadzenText>
+                        </RadzenCard>
+                    </RadzenColumn>
+                    <RadzenColumn Size="3">
+                    </RadzenColumn>
+                </RadzenRow>
+            }
+            else
+            {
+                <RadzenRow JustifyContent="JustifyContent.Start" Style="margin-bottom:5px;">
+                    <RadzenColumn Size="3">
+                    </RadzenColumn>
+                    <RadzenColumn Size="9">
+                        <RadzenCard Variant="Variant.Flat" class="rz-background-color-success-lighter rz-color-on-success-lighter">
+                            <RadzenText TextStyle="TextStyle.Body1">@message.Message</RadzenText>
+                        </RadzenCard>
+                    </RadzenColumn>
+                </RadzenRow>
+            }
+        }
+    </RadzenColumn>
+    <RadzenFormField Style="width: 100%;">
+        <ChildContent>
+            <RadzenTextBox @bind-Value=@_newMessage />
+        </ChildContent>
+        <End>
+            <RadzenButton Icon="contact_support" Variant="Variant.Text" Size="ButtonSize.Medium" Click="OnChatButtonClickAsync" />
+        </End>
+    </RadzenFormField>
+</RadzenStack>
+
+<script>
+    function updateChatWrapperScroll() {
+        var elem = document.querySelector("#chat-wrapper");
+        elem.scrollTop = elem.scrollHeight;
+    }
+</script>
+
+@code {
+
+    [Parameter]
+    public EventCallback<string> OnNewUserMessage { get; set; }
+
+    private string _newMessage = "";
+    private ICollection<ChatMessageModel> _messages = new List<ChatMessageModel>();
+
+    private async Task KeepChatScrollDownAsync() => await _jsRuntime.InvokeAsync<string>("updateChatWrapperScroll");
+
+    private async Task OnChatButtonClickAsync()
+    {
+        await AddMessageAsync(_newMessage, true, ChatMessageType.User);
+        _newMessage = string.Empty;
+    }
+
+    public Guid CreateMessage(string messageContent, bool propagate = false, ChatMessageType type = ChatMessageType.Assistant)
+    {
+        var message = new ChatMessageModel { Type = type, Date = DateTime.UtcNow, Message = messageContent };
+        _messages.Add(message);
+
+        return message.Id;
+    }
+
+    public async Task AddMessageAsync(string message, bool propagate = false, ChatMessageType type = ChatMessageType.Assistant)
+    {
+        CreateMessage(message, propagate, type);
+        if (propagate) await OnNewUserMessage.InvokeAsync(_newMessage);
+        await KeepChatScrollDownAsync();
+    }
+
+    public async Task TypeMessageAsync(Guid messageId, string content, bool propagate = false)
+    {
+        _messages.Single(m => m.Id.Equals(messageId)).Message += content;
+        if (propagate) await OnNewUserMessage.InvokeAsync(_newMessage);
+        await KeepChatScrollDownAsync();
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+
+        _messages.Add(new ChatMessageModel { Type = ChatMessageType.Assistant, Date = DateTime.UtcNow, Message = "Hi USER! How can I help you?" });
+    }
+}

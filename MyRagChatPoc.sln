@@ -1,0 +1,44 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.9.34728.123
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{34DFE500-7EA8-49A3-9FF7-FFC395315C84}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+		LICENSE = LICENSE
+		README.md = README.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{F82BB4C2-639E-40AD-852E-7AFACEACF3B1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRagChatPoc.BlazorApp", "src\MyRagChatPoc.BlazorApp\MyRagChatPoc.BlazorApp.csproj", "{34F96833-0606-4FC2-9D32-0B95F377B6AB}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MyRagChatPoc.Kernel", "src\MyRagChatPoc.Kernel\MyRagChatPoc.Kernel.csproj", "{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{34F96833-0606-4FC2-9D32-0B95F377B6AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{34F96833-0606-4FC2-9D32-0B95F377B6AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{34F96833-0606-4FC2-9D32-0B95F377B6AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{34F96833-0606-4FC2-9D32-0B95F377B6AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{34F96833-0606-4FC2-9D32-0B95F377B6AB} = {F82BB4C2-639E-40AD-852E-7AFACEACF3B1}
+		{117BDC4A-6B4D-4C60-BDA1-B60146F9C8A8} = {F82BB4C2-639E-40AD-852E-7AFACEACF3B1}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {5E1A811B-7FD8-4C8D-BE2C-718C593AA4EA}
+	EndGlobalSection
+EndGlobal

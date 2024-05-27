@@ -1,0 +1,47 @@
+﻿@page "/knowledgebase/index"
+@rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
+
+@inject DialogService _dialogService;
+@inject NotificationService _notificationService;
+@inject IKnowledgeBaseService _knowledgeBaseService;
+
+<PageTitle>Knowledge Base - Index</PageTitle>
+
+<RadzenDialog />
+<RadzenNotification />
+
+<RadzenRow>
+    <RadzenColumn Size="3">        
+    </RadzenColumn>
+    <RadzenColumn>        
+    </RadzenColumn>
+    <RadzenColumn Size="3">
+        <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End">
+            <RadzenButton Text="Search" ButtonStyle="ButtonStyle.Primary" Click=@(args => OnSearchClickAsync()) Style="width: 100px" />
+            <RadzenButton Text="Import" ButtonStyle="ButtonStyle.Primary" Click=@(args => OnImportClickAsync()) Style="width: 100px" />
+        </RadzenStack>
+    </RadzenColumn>
+</RadzenRow>
+
+@code {
+    [Parameter]
+    public string Query { get; set; }
+
+    private async Task OnImportClickAsync()
+    {
+        var options = new SideDialogOptions { CloseDialogOnOverlayClick = false, Position = DialogPosition.Right, ShowMask = true };
+        var result = await _dialogService.OpenSideAsync<ImportDocument>("Import Document", options: options);
+    }
+
+    private async Task OnSearchClickAsync()
+    {
+        var options = new DialogOptions() { Width = "700px", Height = "512px", Resizable = true, Draggable = true };
+        var result = await _dialogService.OpenAsync<SearchDialog>("Search Content", options: options);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+    }
+}

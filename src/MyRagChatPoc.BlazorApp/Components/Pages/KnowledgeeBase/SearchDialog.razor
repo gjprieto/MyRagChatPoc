@@ -1,0 +1,63 @@
+﻿@rendermode RenderMode.InteractiveServer
+@attribute [StreamRendering]
+
+@inject DialogService _dialogService;
+@inject IKnowledgeBaseService _knowledgeBaseService;
+
+<RadzenStack Gap="1rem" Orientation="Orientation.Vertical" JustifyContent="JustifyContent.SpaceBetween" Style="height: 100%;">
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.Center" Gap="0.5rem">
+        <RadzenFormField Style="width: 100%;">
+            <ChildContent>
+                <RadzenTextBox @bind-Value=@Query />
+            </ChildContent>
+            <End>
+                <RadzenButton Icon="search" Variant="Variant.Text" Size="ButtonSize.Medium" Click=@(args => OnSearchButtonClickAsync()) />
+            </End>
+        </RadzenFormField>
+    </RadzenStack>
+    <RadzenStack Style="height:275px; overflow-y: scroll; overflow-x: hidden;">
+    @foreach (var item in _items)
+    {
+        <RadzenCard Variant="Variant.Outlined" Style="margin-bottom: 10px;">
+            <RadzenRow Style="margin-bottom: 10px;">
+                <RadzenColumn Size="6">
+                    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.Start" Style="width: 100%;">
+                        <RadzenText>@item.Score</RadzenText>                        
+                    </RadzenStack>                    
+                </RadzenColumn>
+                <RadzenColumn Size="6">
+                    <RadzenStack Orientation="Orientation.Vertical" JustifyContent="JustifyContent.End" Style="width: 100%;">
+                        <RadzenText>@item.Key</RadzenText>
+                    </RadzenStack>                    
+                </RadzenColumn>
+            </RadzenRow>
+            <RadzenRow>
+                <RadzenColumn Size="12">
+                    @item.Text
+                </RadzenColumn>
+            </RadzenRow>
+        </RadzenCard>
+    }
+    </RadzenStack>
+    <RadzenStack Orientation="Orientation.Horizontal" JustifyContent="JustifyContent.End" Gap="0.5rem">
+        <RadzenButton Click="@((args) => _dialogService.Close(true))" Variant="Variant.Flat" Text="Close" Style="width: 120px" />
+    </RadzenStack>
+</RadzenStack>
+
+@code {
+    [Parameter]
+    public string Query { get; set; }
+
+    private IEnumerable<MemoryItem> _items;
+
+    private async Task OnSearchButtonClickAsync()
+    {
+        _items = await _knowledgeBaseService.SearchAsync(Query, minRelevanceScore: 0.80);
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await base.OnInitializedAsync();
+        _items = new List<MemoryItem>();
+    }
+}
